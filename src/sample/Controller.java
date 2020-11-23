@@ -113,4 +113,45 @@ public class Controller {
     public void doConversionFromRGBToHSI(ActionEvent actionEvent) {
 
     }
+
+    public void doAverageGayScale(ActionEvent actionEvent) {
+        BufferedImage outputImage = new
+                BufferedImage(inputBufferedImage.getWidth(),inputBufferedImage.getHeight(),BufferedImage.TYPE_BYTE_GRAY);
+        for(int row=0;row<inputBufferedImage.getHeight();row++){
+            for(int col=0;col<inputBufferedImage.getWidth();col++){
+                int rgb = inputBufferedImage.getRGB(col,row);
+
+                int red = (rgb>>16)&0xFF;
+                int green = (rgb>>8)&0xFF;
+                int blue= (rgb)&0xFF;
+
+                int gray = (red+green+blue)/3;
+
+                outputImage.setRGB(col,row,(gray<<16)|(gray<<8)|gray);
+            }
+        }
+        output_image.setImage(SwingFXUtils.toFXImage(outputImage,null));
+    }
+
+    public void doDeSaturation(ActionEvent actionEvent) {
+        BufferedImage outputImage = new
+                BufferedImage(inputBufferedImage.getWidth(),inputBufferedImage.getHeight(),BufferedImage.TYPE_BYTE_GRAY);
+        for(int row=0;row<inputBufferedImage.getHeight();row++){
+            for(int col=0;col<inputBufferedImage.getWidth();col++){
+                int rgb = inputBufferedImage.getRGB(col,row);
+
+                int red = (rgb>>16)&0xFF;
+                int green = (rgb>>8)&0xFF;
+                int blue= (rgb)&0xFF;
+
+                int max = Math.max(Math.max(red,green),blue);
+                int min = Math.min(Math.min(red, green),blue);
+
+                int gray = (max+min)/2;
+
+                outputImage.setRGB(col,row,(gray<<16)|(gray<<8)|gray);
+            }
+        }
+        output_image.setImage(SwingFXUtils.toFXImage(outputImage,null));
+    }
 }

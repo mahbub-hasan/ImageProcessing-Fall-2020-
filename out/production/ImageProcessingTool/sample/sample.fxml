@@ -19,6 +19,8 @@
           <Menu mnemonicParsing="false" text="Monochromatic Color">
                <items>
                   <MenuItem mnemonicParsing="false" onAction="#gotoSingleColorForm" text="Single Color" />
+                   <MenuItem mnemonicParsing="false" onAction="#doAverageGayScale" text="Avg Gray Scale"/>
+                   <MenuItem mnemonicParsing="false" onAction="#doDeSaturation" text="DeSaturated Image"/>
                </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Color Model">
