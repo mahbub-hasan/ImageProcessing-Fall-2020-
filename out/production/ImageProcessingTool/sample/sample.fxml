@@ -29,6 +29,12 @@
                   <MenuItem fx:id="menu_rgb_hsi_conversion" mnemonicParsing="false" onAction="#doConversionFromRGBToHSI" text="RGB To HSI" />
             </items>
           </Menu>
+            <Menu mnemonicParsing="false" text="Histogram">
+                <items>
+                    <MenuItem fx:id="menu_grayscale_histogram" mnemonicParsing="false" onAction="#calculateGrayScaleHistogram" text="GrayScale Histogram"/>
+                </items>
+
+            </Menu>
         </menus>
       </MenuBar>
       <ImageView fx:id="input_image" fitHeight="350.0" fitWidth="275.0" layoutX="14.0" layoutY="89.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="40.0" />

@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -153,5 +154,46 @@ public class Controller {
             }
         }
         output_image.setImage(SwingFXUtils.toFXImage(outputImage,null));
+    }
+
+    public void calculateGrayScaleHistogram(ActionEvent actionEvent) {
+        int[] histogram = new int[256];
+
+        BufferedImage grayScaleImage = getGrayScaleImage();
+
+        WritableRaster raster = grayScaleImage.getRaster();
+
+        for(int row=0; row<grayScaleImage.getHeight(); row++){
+            for(int col=0; col<grayScaleImage.getWidth(); col++){
+
+                int pixel = raster.getSample(col, row, 0);
+
+                histogram[pixel]++;
+
+            }
+        }
+
+        for(int index=0;index<histogram.length;index++){
+            System.out.println("Pixel: "+index+", Count: "+histogram[index]);
+        }
+    }
+
+    private BufferedImage getGrayScaleImage() {
+        BufferedImage outputImage = new
+                BufferedImage(inputBufferedImage.getWidth(),inputBufferedImage.getHeight(),BufferedImage.TYPE_BYTE_GRAY);
+        for(int row=0;row<inputBufferedImage.getHeight();row++){
+            for(int col=0;col<inputBufferedImage.getWidth();col++){
+                int rgb = inputBufferedImage.getRGB(col,row);
+
+                int red = (rgb>>16)&0xFF;
+                int green = (rgb>>8)&0xFF;
+                int blue= (rgb)&0xFF;
+
+                int gray = (red+green+blue)/3;
+
+                outputImage.setRGB(col,row,(gray<<16)|(gray<<8)|gray);
+            }
+        }
+        return outputImage;
     }
 }
