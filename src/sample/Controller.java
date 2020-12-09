@@ -12,8 +12,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import sample.threshold.BasicGlobalThreshold;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
@@ -25,7 +27,7 @@ public class Controller {
 
     public ImageView input_image;
     public ImageView output_image;
-    public BufferedImage inputBufferedImage;
+    public BufferedImage inputBufferedImage, outputImage;
     public MenuBar menuBar;
     private int imageWidth, imageHeight;
 
@@ -54,7 +56,16 @@ public class Controller {
 
     }
 
-    public void saveImageIntoComputer(ActionEvent actionEvent) {
+    public void saveImageIntoComputer(ActionEvent actionEvent) throws IOException {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("JPG File","*.jpg"),
+                new FileChooser.ExtensionFilter("PNG File","*.png")
+        );
+        File file = fileChooser.showSaveDialog(null);
+        if(file==null)
+            return;
+        ImageIO.write(this.outputImage,"jpg",file);
 
     }
 
@@ -107,12 +118,63 @@ public class Controller {
             }
         }
 
+        this.outputImage = outputBufferedImage;
+
         output_image.setImage(SwingFXUtils.toFXImage(outputBufferedImage,null));
 
     }
 
     public void doConversionFromRGBToHSI(ActionEvent actionEvent) {
+        BufferedImage outputBufferedImage =
+                new BufferedImage(imageWidth,imageHeight,BufferedImage.TYPE_3BYTE_BGR);
 
+        for(int row=0;row<imageHeight;row++){
+            for(int col=0;col<imageWidth;col++){
+
+                int rgb = inputBufferedImage.getRGB(col, row);
+
+                int red = (rgb >> 16) & 0xFF;
+                int green = (rgb >> 8) & 0xFF;
+                int blue = (rgb) & 0xFF;
+
+                float nRed = red / 255.0f;
+                float nGreen = green/255.0f;
+                float nBlue = blue/255.0f;
+
+                float hue = 0;
+
+                double h1 = (0.5*((nRed-nGreen)+(nRed-nBlue)));
+                double h2 = Math.sqrt((Math.pow((nRed-nGreen),2))+((nRed-nBlue)*(nGreen-nBlue)));
+                float radianValue = (float) Math.acos(h1/h2);
+
+                float degree = (float) (radianValue*(180/Math.PI));
+
+                if(blue<=green)
+                    hue = degree;
+                else
+                    hue = 360-degree;
+
+                hue = hue/360;
+
+
+                float saturation=0;
+                if((red+green+blue)!=0)
+                    saturation = 1-(3/(nRed+nGreen+nBlue))*Math.min(nRed,Math.min(nGreen,nBlue));
+
+                float intensity = (nRed+nGreen+nBlue)/3;
+
+                int h = (int) (hue*255);
+                int s = (int) (saturation*255);
+                int i = (int) (intensity*255);
+
+
+                outputBufferedImage.setRGB(col, row, (h<<16)|(s<<8)|i);
+            }
+        }
+
+        this.outputImage = outputBufferedImage;
+
+        output_image.setImage(SwingFXUtils.toFXImage(outputBufferedImage,null));
     }
 
     public void doAverageGayScale(ActionEvent actionEvent) {
@@ -131,6 +193,8 @@ public class Controller {
                 outputImage.setRGB(col,row,(gray<<16)|(gray<<8)|gray);
             }
         }
+
+        this.outputImage = outputImage;
         output_image.setImage(SwingFXUtils.toFXImage(outputImage,null));
     }
 
@@ -195,5 +259,12 @@ public class Controller {
             }
         }
         return outputImage;
+    }
+
+    public void doBGT(ActionEvent actionEvent) {
+        BasicGlobalThreshold bgt = new BasicGlobalThreshold(getGrayScaleImage());
+        BufferedImage bufferedImage = bgt.doBasicGlobalThreshold();
+        output_image.setImage(SwingFXUtils.toFXImage(bufferedImage,null));
+        this.outputImage = bufferedImage;
     }
 }
