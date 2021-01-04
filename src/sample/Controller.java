@@ -12,6 +12,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import sample.filter.MeanFilter;
 import sample.threshold.BasicGlobalThreshold;
 
 import javax.imageio.ImageIO;
@@ -21,6 +22,7 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.util.ResourceBundle;
 
 public class Controller {
@@ -98,6 +100,20 @@ public class Controller {
     public void doConversionFromRBGToCMY(ActionEvent actionEvent) {
         BufferedImage outputBufferedImage =
                 new BufferedImage(imageWidth,imageHeight,BufferedImage.TYPE_3BYTE_BGR);
+
+        for(int row=0;row<4;row++){
+            for(int col=0;col<4;col++){
+                int rgb = inputBufferedImage.getRGB(col, row);
+
+                //int red = (rgb >> 16) & 0xFF;
+                //int green = (rgb >> 8) & 0xFF;
+                int blue = (rgb) & 0xFF;
+
+                System.out.print(blue+"\t");
+            }
+            System.out.println();
+        }
+
 
         for(int row=0;row<imageHeight;row++){
             for(int col=0;col<imageWidth;col++){
@@ -264,6 +280,13 @@ public class Controller {
     public void doBGT(ActionEvent actionEvent) {
         BasicGlobalThreshold bgt = new BasicGlobalThreshold(getGrayScaleImage());
         BufferedImage bufferedImage = bgt.doBasicGlobalThreshold();
+        output_image.setImage(SwingFXUtils.toFXImage(bufferedImage,null));
+        this.outputImage = bufferedImage;
+    }
+
+    public void doMeanFilter(ActionEvent actionEvent) {
+        MeanFilter meanFilter = new MeanFilter(getGrayScaleImage());
+        BufferedImage bufferedImage = meanFilter.getMeanFilteringWithBorder();
         output_image.setImage(SwingFXUtils.toFXImage(bufferedImage,null));
         this.outputImage = bufferedImage;
     }
