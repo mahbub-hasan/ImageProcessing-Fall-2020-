@@ -86,6 +86,7 @@ public class SobelOperator {
     }
 
     private BufferedImage applySmoothingFilter(BufferedImage grayScaleImage) {
+        // TODO: apply linear or non-linear filter
         return grayScaleImage;
     }
 
