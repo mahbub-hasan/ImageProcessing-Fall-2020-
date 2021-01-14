@@ -12,6 +12,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import sample.edge_detection.SobelOperator;
 import sample.filter.MeanFilter;
 import sample.threshold.BasicGlobalThreshold;
 
@@ -287,6 +288,13 @@ public class Controller {
     public void doMeanFilter(ActionEvent actionEvent) {
         MeanFilter meanFilter = new MeanFilter(getGrayScaleImage());
         BufferedImage bufferedImage = meanFilter.getMeanFilteringWithBorder();
+        output_image.setImage(SwingFXUtils.toFXImage(bufferedImage,null));
+        this.outputImage = bufferedImage;
+    }
+
+    public void applySobelOperator(ActionEvent actionEvent) {
+        SobelOperator sobelOperator = new SobelOperator(inputBufferedImage);
+        BufferedImage bufferedImage = sobelOperator.edgeDetectionBySobel();
         output_image.setImage(SwingFXUtils.toFXImage(bufferedImage,null));
         this.outputImage = bufferedImage;
     }
